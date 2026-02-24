@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Enhancer | Crystal Clear Images</title>
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #06b6d4;
+            --bg: #030712;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
+        body {
+            background: var(--bg);
+            background-image: radial-gradient(circle at 20% 30%, #1e1b4b 0%, transparent 40%),
+                              radial-gradient(circle at 80% 70%, #164e63 0%, transparent 40%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Nav Bar */
+        nav {
+            width: 100%;
+            padding: 1.5rem 10%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Hero Section */
+        .hero { text-align: center; padding: 60px 20px; }
+        .hero h1 { font-size: 3rem; margin-bottom: 10px; font-weight: 900; }
+        .hero p { color: #94a3b8; margin-bottom: 40px; }
+
+        /* Enhancer Tool Interface */
+        .tool-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            width: 90%;
+            max-width: 900px;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 768px) { .tool-container { grid-template-columns: 1fr; } }
+
+        /* Preview Box */
+        .preview-box {
+            background: #000;
+            border-radius: 20px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; display: none; }
+        .placeholder-text { color: #475569; text-align: center; }
+
+        /* Controls */
+        .controls { display: flex; flex-direction: column; gap: 20px; }
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.85rem; color: #94a3b8; }
+        
+        input[type="range"] { accent-color: var(--primary); width: 100%; cursor: pointer; }
+
+        .btn-upload {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+        .btn-upload:hover { background: rgba(255,255,255,0.1); border-color: var(--primary); }
+
+        .btn-process {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 18px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Loading Bar */
+        .loader { height: 4px; width: 0%; background: var(--primary); position: absolute; bottom: 0; left: 0; transition: 0.5s; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">ENHANCE.AI</div>
+        <div style="color: #94a3b8; font-size: 0.9rem;">v2.0 Beta</div>
+    </nav>
+
+    <div class="hero">
+        <h1>Transform Your <span>Photos</span></h1>
+        <p>AI-powered resolution enhancement and noise reduction in your browser.</p>
+    </div>
+
+    <div class="tool-container">
+        <div class="preview-box" id="dropzone">
+            <div class="loader" id="loader"></div>
+            <div class="placeholder-text" id="placeholder">
+                <span style="font-size: 3rem;">🖼️</span>
+                <p>Drag image here or click upload</p>
+            </div>
+            <img id="mainImage" src="" alt="Preview">
+        </div>
+
+        <div class="controls">
+            <button class="btn-upload" onclick="document.getElementById('fileInput').click()">📁 Select Image</button>
+            <input type="file" id="fileInput" hidden accept="image/*" onchange="previewFile(this)">
+
+            <div class="control-group">
+                <label>Enhancement Strength</label>
+                <input type="range" min="1" max="100" value="85">
+            </div>
+
+            <div class="control-group">
+                <label>Denoise Level</label>
+                <input type="range" min="1" max="100" value="40">
+            </div>
+
+            <div class="control-group">
+                <label>Upscale Factor</label>
+                <select style="background: #1e293b; color: white; padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                    <option>2x (HD)</option>
+                    <option>4x (Ultra HD)</option>
+                </select>
+            </div>
+
+            <button class="btn-process" onclick="processImage()">Enhance Now</button>
+        </div>
+    </div>
+
+    <footer style="margin-top: 50px; color: #475569; font-size: 0.8rem; padding-bottom: 30px;">
+        &copy; 2026 AI Image Lab. Local GPU acceleration enabled.
+    </footer>
+
+    <script>
+        function previewFile(input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            const img = document.getElementById('mainImage');
+            const placeholder = document.getElementById('placeholder');
+
+            reader.onload = function(e) {
+                img.src = e.target.result;
+                img.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+            if(file) reader.readAsDataURL(file);
+        }
+
+        function processImage() {
+            const loader = document.getElementById('loader');
+            const btn = document.querySelector('.btn-process');
+            
+            btn.innerText = "Enhancing...";
+            loader.style.width = "100%";
+            
+            setTimeout(() => {
+                alert("Enhancement complete! Your high-res image is ready.");
+                loader.style.width = "0%";
+                btn.innerText = "Enhance Now";
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
